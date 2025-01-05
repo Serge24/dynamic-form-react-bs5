@@ -1,0 +1,60 @@
+{
+  "name": "dynamic-form-react-bs5",
+  "private": false,
+  "version": "1.0.2",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config webpack.config.js",
+    "lint": "eslint 'pages/*.{js,ts}'",
+    "start": "webpack serve --config webpack.config.js --open"
+  },
+  "keywords": [
+    "react",
+    "bootstrap",
+    "css",
+    "javacript",
+    "js",
+    "ts",
+    "typescript",
+    "dynamic-form",
+    "dynamic-form-bs",
+    "dynamic-form-bs5",
+    "form-bs",
+    "dynamic"
+  ],
+  "author": "erge TALAKI",
+  "license": "ISC",
+  "description": "dynamic-form-bs is a lightweight and flexible library for building and managing dynamic, metadata-driven forms in React applications. It simplifies the creation of complex forms by allowing developers to define forms declaratively through JSON or model-based dynamic fields",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "axios": "^1.7.9",
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "datatables.net": "^2.1.8",
+    "datatables.net-dt": "^2.1.8",
+    "datatables.net-react": "^1.0.0",
+    "jquery": "^3.7.1",
+    "moment": "^2.30.1",
+    "notiflix": "^3.2.8",
+    "react": "^19.0.0",
+    "react-datetime": "^3.3.1",
+    "react-select": "^5.9.0",
+    "reflect-metadata": "^0.2.2"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.5.32",
+    "@types/node": "^22.10.5",
+    "@typescript-eslint/eslint-plugin": "^8.19.0",
+    "@typescript-eslint/parser": "^8.19.0",
+    "eslint": "^9.17.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.7.2",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.0"
+  }
+}
