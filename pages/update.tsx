@@ -2,14 +2,14 @@ import React, { useEffect, useRef, useState } from "react";
 import Select from "react-select";
 import DateTime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
-import { CrudClass, DateOption, FieldMetadata, SelectOption } from "../models/CrudClass";
+import { Index, DateOption, FieldMetadata, SelectOption } from "../models";
 import moment from 'moment';
 import 'moment/locale/fr';
 import { faSave } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface DynamicFormProps {
-    model: typeof CrudClass, // The model class
+    model: typeof Index, // The model class
     onSubmit: (formData: Record<string, any>) => void; // Callback when form is submitted
     url: string | {useAPI?:boolean, route:string, formatterKey?:string|number|symbol}
     headers?: Record<string, string>,
@@ -26,7 +26,7 @@ const DynamicFormUpdate: React.FC<DynamicFormProps> = ({ url, onSubmit, onError,
         model.getFieldsForOperation("update")
     );
 
-    const [formData, setFormData] = useState<Partial<InstanceType<typeof CrudClass>>>(() =>
+    const [formData, setFormData] = useState<Partial<InstanceType<typeof Index>>>(() =>
         updateFields.current.reduce((acc, field) => {
             acc[field.fieldName] = field.field_options?.type === "checkbox" ? false : ""; // Initialize checkboxes to `false`
             return acc;

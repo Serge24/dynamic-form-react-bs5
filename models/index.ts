@@ -60,7 +60,7 @@ interface FetchProps {
     onError?: (error: any) => void;
 }
 
-abstract class CrudClass {
+abstract class Index {
     private static tableHeaders: { fieldName: string; header: string }[] = [];
     
     [key: string]: any;
@@ -97,7 +97,7 @@ abstract class CrudClass {
      * @param onBeforeFetch - Optional callback to execute before fetching.
      * @param onAfterFetch - Optional callback to execute after fetching.
      */
-    static async fetchData<T extends typeof CrudClass, F = JsonFormatter<InstanceType<T>>>({ url, headers, onBeforeFetch, onAfterFetch, onError, formatterKey}: FetchProps & { formatterKey?: keyof F }):  Promise<Array<Partial<InstanceType<T>>>> {
+    static async fetchData<T extends typeof Index, F = JsonFormatter<InstanceType<T>>>({ url, headers, onBeforeFetch, onAfterFetch, onError, formatterKey}: FetchProps & { formatterKey?: keyof F }):  Promise<Array<Partial<InstanceType<T>>>> {
         try {
             onBeforeFetch?.();
 
@@ -166,7 +166,7 @@ abstract class CrudClass {
      * @param onBeforeFetch - Optional callback to execute before fetching.
      * @param onAfterFetch - Optional callback to execute after fetching.
      */
-    static async fetchDataForUpdate<T extends typeof CrudClass, F = JsonFormatter<InstanceType<T>>>({ url, headers, onBeforeFetch, onAfterFetch, onError }: FetchProps & { formatterKey?: keyof F }): Promise<Partial<InstanceType<T>>> {
+    static async fetchDataForUpdate<T extends typeof Index, F = JsonFormatter<InstanceType<T>>>({ url, headers, onBeforeFetch, onAfterFetch, onError }: FetchProps & { formatterKey?: keyof F }): Promise<Partial<InstanceType<T>>> {
         try {
             onBeforeFetch?.();
             const config: AxiosRequestConfig = { headers: headers || {} };
@@ -223,7 +223,7 @@ abstract class CrudClass {
 }
 
 function CrudField(metadata: Partial<FieldMetadata>): PropertyDecorator {
-    return function (target: CrudClass, propertyKey: string | symbol): void {
+    return function (target: Index, propertyKey: string | symbol): void {
         //const clsContructor = target.constructor as typeof CrudClass;
 
         // Ensure `propertyKey` is a string for compatibility with `addFieldMetadata`
@@ -245,5 +245,5 @@ function getNestedValue(obj: any, path: string): any {
 }
 
 
-export { CrudClass, CrudField, type Operation, type FieldOptions, type FieldType,
+export { Index, CrudField, type Operation, type FieldOptions, type FieldType,
      type FieldMetadata, type SelectOption, type FieldGroupObj };
