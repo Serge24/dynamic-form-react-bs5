@@ -1,7 +1,7 @@
 {
   "name": "dynamic-form-react-bs5",
   "private": false,
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -23,7 +23,11 @@
     "form-bs",
     "dynamic"
   ],
-  "author": "erge TALAKI",
+  "readme": "README.md",
+  "repository": {
+    "url": "https://github.com/Serge24/dynamic-form-react-bs5.git"
+  },
+  "author": "Serge TALAKI",
   "license": "ISC",
   "description": "dynamic-form-bs is a lightweight and flexible library for building and managing dynamic, metadata-driven forms in React applications. It simplifies the creation of complex forms by allowing developers to define forms declaratively through JSON or model-based dynamic fields",
   "dependencies": {
