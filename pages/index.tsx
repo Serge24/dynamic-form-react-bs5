@@ -1,7 +1,7 @@
 import React, { MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react';
 import DataTable, { DataTableRef, DataTableSlot, DataTableSlots } from 'datatables.net-react';
 import moment, { Moment } from 'moment';
-import { Index, FieldMetadata } from "../models";
+import { CrudClass, FieldMetadata } from "../models";
 import JsonFormatter from '../services/json-formatter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faPencilAlt, faEye } from "@fortawesome/free-solid-svg-icons";
@@ -16,7 +16,7 @@ DataTable.use(DT);
 import $ from 'jquery';
 window.$ = $;
 
-type T = typeof Index;
+type T = typeof CrudClass;
 
 interface DynamicDataTableProps {
     url: string | {useAPI?:boolean, route:string, formatterKey?: string|number|symbol}

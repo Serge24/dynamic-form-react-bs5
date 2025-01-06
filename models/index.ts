@@ -60,7 +60,7 @@ interface FetchProps {
     onError?: (error: any) => void;
 }
 
-abstract class Index {
+abstract class CrudClass {
     private static tableHeaders: { fieldName: string; header: string }[] = [];
     
     [key: string]: any;
@@ -245,5 +245,5 @@ function getNestedValue(obj: any, path: string): any {
 }
 
 
-export { Index, CrudField, type Operation, type FieldOptions, type FieldType,
+export { CrudClass, CrudField, type Operation, type FieldOptions, type FieldType,
      type FieldMetadata, type SelectOption, type FieldGroupObj };
