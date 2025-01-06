@@ -121,8 +121,8 @@ abstract class CrudClass {
 
             if (formatterKey && response.data) {
                 // Use the formatterKey if provided
-                //dataArray = getNestedValue(response.data, formatterKey.toString()) as Partial<InstanceType<T>>[];
-                dataArray = (response.data as F)[formatterKey] as Partial<InstanceType<T>>[];
+                dataArray = getNestedValue(response.data, formatterKey.toString()) as Partial<InstanceType<T>>[];
+                //dataArray = (response.data as F)[formatterKey] as Partial<InstanceType<T>>[];
             } else {
                 // Assume the data is already in the requested format
                 dataArray = response.data as Partial<InstanceType<T>>[];
