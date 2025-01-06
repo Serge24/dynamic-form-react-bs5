@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Select from "react-select";
 import DateTime from "react-datetime";
-import "react-datetime/css/react-datetime.css"; // Import datetime picker styles
+import "react-datetime/css/react-datetime.css";
 import { CrudClass, DateOption, FieldMetadata, SelectOption } from "../models/CrudClass";
 import moment from 'moment';
 import 'moment/locale/fr';
@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 interface DynamicFormProps {
     model: typeof CrudClass, // The model class
     onSubmit: (formData: Record<string, any>) => void; // Callback when form is submitted
-    url: string | {useAPI?:boolean, route:string}
+    url: string | {useAPI?:boolean, route:string, formatterKey?:string|number|symbol}
     headers?: Record<string, string>,
     onBeforeFetch: () => void,
     onAfterFetch: () => void
@@ -26,17 +26,12 @@ const DynamicFormUpdate: React.FC<DynamicFormProps> = ({ url, onSubmit, onError,
         model.getFieldsForOperation("update")
     );
 
-    console.log({["here"]:updateFields})
-
     const [formData, setFormData] = useState<Partial<InstanceType<typeof CrudClass>>>(() =>
         updateFields.current.reduce((acc, field) => {
             acc[field.fieldName] = field.field_options?.type === "checkbox" ? false : ""; // Initialize checkboxes to `false`
             return acc;
         }, {} as Record<string, any>)
     );
-
-    console.log({["form data here"]:formData})
-
 
     const [dynamicOptions, setDynamicOptions] = useState<Record<string, SelectOption[]>>({});
 
@@ -64,7 +59,7 @@ const DynamicFormUpdate: React.FC<DynamicFormProps> = ({ url, onSubmit, onError,
         const fetchData = async () => {
             onBeforeFetch?.();
             try {
-                const data = await model.fetchDataForUpdate({ url, headers, onBeforeFetch, onAfterFetch, onError, formatterKey:"" });
+                const data = await model.fetchDataForUpdate({ url, headers, onBeforeFetch, onAfterFetch, onError });
                 
                 const formattedData = updateFields.current.reduce((acc, field) => {
                     const { fieldName, field_options:options } = field;
@@ -82,7 +77,6 @@ const DynamicFormUpdate: React.FC<DynamicFormProps> = ({ url, onSubmit, onError,
                 }, {} as Record<string, any>);
                 setFormData((prevData) => ({ ...prevData, ...formattedData }));
 
-                console.log({formData, formattedData})
                 onData?.(formData)
             } catch (fetchError) {
                 onError?.("Error fetching update data:" + fetchError);
@@ -120,7 +114,6 @@ const DynamicFormUpdate: React.FC<DynamicFormProps> = ({ url, onSubmit, onError,
                 );
                 setDynamicOptions(fetchedOptions);
             } catch (fetchError) {
-                console.log({fetchError})
                 onError("Failed to load options --- "+JSON.stringify(fetchError));
             }
         };
@@ -162,7 +155,6 @@ const DynamicFormUpdate: React.FC<DynamicFormProps> = ({ url, onSubmit, onError,
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        console.log({["handle submit"]:formData})
         onSubmit(formData);
     };
 

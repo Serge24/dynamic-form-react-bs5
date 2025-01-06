@@ -20,8 +20,6 @@ interface DynamicFormProps {
 const DynamicFormCreate: React.FC<DynamicFormProps> = ({ model, onSubmit }: DynamicFormProps) => {
   const createFields = useRef<FieldMetadata[]>(model.getFieldsForOperation("create"))
 
-  console.log({ ["fields to show"]: createFields, length: createFields.current.length })
-
   const [formData, setFormData] = useState<Record<string, any>>(() =>
     createFields.current.reduce((acc, field) => {
       acc[field.fieldName] = field.field_options?.type === "checkbox" ? false : ""; // Initialize checkboxes to `false`
@@ -75,7 +73,6 @@ const DynamicFormCreate: React.FC<DynamicFormProps> = ({ model, onSubmit }: Dyna
           createFields.current.map(async (field) => {
             const { fieldName, field_options: options } = field;
             if (options?.type === "select" && typeof options.options === "string") {
-              console.log(`Fetching options for field: ${fieldName} from ${options.options}`);
               const response = await fetch(options.options);
               if (!response.ok) throw new Error(`Failed to fetch ${options.options}`);
               const data = await response.json();

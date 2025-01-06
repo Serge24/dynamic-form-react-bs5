@@ -53,7 +53,7 @@ interface FieldMetadata {
 //type renderOnDataList = (data: Array<any>)=>void;
 
 interface FetchProps {
-    url: string | {useAPI?:boolean, route:string}
+    url: string | {useAPI?:boolean, route:string, formatterKey?:string|number|symbol}
     headers?: Record<string, string>;
     onBeforeFetch?: () => void;
     onAfterFetch?: () => void;
@@ -81,7 +81,6 @@ abstract class CrudClass {
     }
 
     static getFieldsForOperation(operation: Operation): FieldMetadata[] {
-        console.log({["all fields"]:this.prototype.getAllFields()})
         return this.prototype.getAllFields().filter((field) => {
             return !!field.fieldName && (field.operations || [] as Operation[]).includes(operation)
         });
@@ -98,11 +97,11 @@ abstract class CrudClass {
      * @param onBeforeFetch - Optional callback to execute before fetching.
      * @param onAfterFetch - Optional callback to execute after fetching.
      */
-    static async fetchData<T extends typeof CrudClass, F = JsonFormatter<InstanceType<T>>>({ url, headers, onBeforeFetch, onAfterFetch, onError, formatterKey}: FetchProps & { formatterKey: keyof F }):  Promise<Array<Partial<InstanceType<T>>>> {
+    static async fetchData<T extends typeof CrudClass, F = JsonFormatter<InstanceType<T>>>({ url, headers, onBeforeFetch, onAfterFetch, onError, formatterKey}: FetchProps & { formatterKey?: keyof F }):  Promise<Array<Partial<InstanceType<T>>>> {
         try {
             onBeforeFetch?.();
 
-            const {route, useAPI} = (typeof url === 'string')? {route:url, useAPI:true}: url;
+            const {route, useAPI, formatterKey} = (typeof url === 'string')? {route:url, useAPI:true, formatterKey:undefined}: url;
 
             const config: AxiosRequestConfig = { headers: headers || {} };
 
@@ -122,7 +121,7 @@ abstract class CrudClass {
 
             if (formatterKey && response.data) {
                 // Use the formatterKey if provided
-                dataArray = getNestedValue(response.data, formatterKey.toString()) as Partial<InstanceType<T>>[];
+                //dataArray = getNestedValue(response.data, formatterKey.toString()) as Partial<InstanceType<T>>[];
                 dataArray = (response.data as F)[formatterKey] as Partial<InstanceType<T>>[];
             } else {
                 // Assume the data is already in the requested format
@@ -136,20 +135,13 @@ abstract class CrudClass {
             dataArray.forEach((item) => {
                 const updatedFields: Partial<InstanceType<T>> = {} as any;
 
-                //console.log("Processing item:", item);
                 // Iterate over fields metadata to include 'update' fields
                 this.getFieldsForOperation("read").forEach((field) => {
-                    //console.log(`Checking field: ${field.fieldName}, value:`, item[field.fieldName]);
 
                     if (item[field.fieldName] !== undefined) {
                         (updatedFields as any)[field.fieldName] = item[field.fieldName];
-                        console.log({["data set"]: field.fieldName, ["-value"]:item[field.fieldName]})
                     }
                 });
-
-                console.log({["updated fields"]: updatedFields})
-
-                //console.log("Updated fields:", updatedFields);
 
                 updatedArray.push(updatedFields);
             });
@@ -167,76 +159,6 @@ abstract class CrudClass {
         }
     }
 
-    static async fetchDataOldL<T extends typeof CrudClass, F = JsonFormatter<InstanceType<T>>>({
-        url,
-        headers,
-        onBeforeFetch,
-        onAfterFetch,
-        onError,
-        formatterKey,
-    }: FetchProps & { formatterKey?: string }): Promise<Array<Partial<InstanceType<T>>>> {
-        try {
-            onBeforeFetch?.();
-    
-            const { route, useAPI } = typeof url === "string" ? { route: url, useAPI: true } : url;
-    
-            const config: AxiosRequestConfig = { headers: headers || {} };
-    
-            let response: AxiosResponse<F, any> = {} as any;
-    
-            if (useAPI) {
-                response = await api.get<any, AxiosResponse<F, any>>(route, config);
-            } else {
-                response = await axios.get<any, AxiosResponse<F, any>>(route, config);
-            }
-    
-            if (response.statusText.toUpperCase() !== "OK") {
-                throw new Error(response.statusText);
-            }
-    
-            let dataArray: Partial<InstanceType<T>>[];
-    
-            if (formatterKey && response.data) {
-                dataArray = getNestedValue(response.data, formatterKey) as Partial<InstanceType<T>>[];
-            } else {
-                dataArray = response.data as Partial<InstanceType<T>>[];
-            }
-    
-            if (!dataArray || !Array.isArray(dataArray)) {
-                throw new Error(`Data not found or invalid for formatterKey: ${formatterKey}`);
-            }
-    
-            const updatedArray: Array<Partial<InstanceType<T>>> = [];
-    
-            dataArray.forEach((item, index) => {
-                const updatedFields: Partial<InstanceType<T>> = {};
-    
-                console.log(`Processing item #${index + 1}:`, item);
-    
-                this
-                    .getFieldsForOperation("read")
-                    .forEach((field) => {
-                        console.log(`Checking field: ${field.fieldName}, Value: ${item[field.fieldName]}`);
-                        if (item[field.fieldName] !== undefined) {
-                            (updatedFields as any)[field.fieldName] = item[field.fieldName];
-                        }
-                    });
-    
-                console.log(`Updated fields for item #${index + 1}:`, updatedFields);
-    
-                updatedArray.push(updatedFields);
-            });
-    
-            onAfterFetch?.();
-    
-            return updatedArray;
-        } catch (error) {
-            onError?.(error);
-            return [];
-        }
-    }
-    
-
     /**
      * Fetches data from the given API URL and populates the fields for the "update" operation.
      * @param apiUrl - The URL to fetch data from.
@@ -244,12 +166,12 @@ abstract class CrudClass {
      * @param onBeforeFetch - Optional callback to execute before fetching.
      * @param onAfterFetch - Optional callback to execute after fetching.
      */
-    static async fetchDataForUpdate<T extends typeof CrudClass, F = JsonFormatter<InstanceType<T>>>({ url, headers, onBeforeFetch, onAfterFetch, onError, onData, formatterKey }: FetchProps & { formatterKey: keyof F }): Promise<Partial<InstanceType<T>>> {
+    static async fetchDataForUpdate<T extends typeof CrudClass, F = JsonFormatter<InstanceType<T>>>({ url, headers, onBeforeFetch, onAfterFetch, onError }: FetchProps & { formatterKey?: keyof F }): Promise<Partial<InstanceType<T>>> {
         try {
             onBeforeFetch?.();
             const config: AxiosRequestConfig = { headers: headers || {} };
 
-            const {route, useAPI} = (typeof url === 'string')? {route:url, useAPI:true}: url;
+            const {route, useAPI, formatterKey} = (typeof url === 'string')? {route:url, useAPI:true, formatterKey:undefined}: url;
 
 
             let response:AxiosResponse<F, any> = {} as any;
@@ -277,8 +199,6 @@ abstract class CrudClass {
                 // Assume the data is already in the requested format
                 dataArray = response.data as Partial<InstanceType<T>>[];
             }
-
-            onData?.(dataArray as any)
 
             const updatedFields: Partial<InstanceType<T>> = {};
 

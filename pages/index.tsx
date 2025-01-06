@@ -19,7 +19,7 @@ window.$ = $;
 type T = typeof CrudClass;
 
 interface DynamicDataTableProps {
-    url: string | {useAPI?:boolean, route:string}
+    url: string | {useAPI?:boolean, route:string, formatterKey?: string|number|symbol}
     headers?: Record<string, string>;
     model: T;
     onBeforeFetch: () => void;
